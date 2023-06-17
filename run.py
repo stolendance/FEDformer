@@ -90,6 +90,10 @@ def main():
     parser.add_argument('--use_multi_gpu', action='store_true', help='use multiple gpus', default=False)
     parser.add_argument('--devices', type=str, default='0,1', help='device ids of multi gpus')
 
+
+    # 自定义
+    parser.add_argument('--sample_rate', type=int, default=1, help='sample rate')
+    
     args = parser.parse_args()
 
     args.use_gpu = True if torch.cuda.is_available() and args.use_gpu else False

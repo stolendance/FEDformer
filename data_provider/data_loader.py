@@ -12,7 +12,7 @@ warnings.filterwarnings('ignore')
 
 
 class Dataset_ETT_hour(Dataset):
-    def __init__(self, root_path, flag='train', size=None,
+    def __init__(self, root_path, flag='train', size=None,sample_rate=1,
                  features='S', data_path='ETTh1.csv',
                  target='OT', scale=True, timeenc=0, freq='h'):
         # size [seq_len, label_len, pred_len]
@@ -22,9 +22,10 @@ class Dataset_ETT_hour(Dataset):
             self.label_len = 24 * 4
             self.pred_len = 24 * 4
         else:
-            self.seq_len = size[0]
-            self.label_len = size[1]
-            self.pred_len = size[2]
+            self.sample_rate = sample_rate
+            self.seq_len = size[0] * self.sample_rate
+            self.label_len = size[1] * self.sample_rate
+            self.pred_len = size[2] * self.sample_rate
         # init
         assert flag in ['train', 'test', 'val']
         type_map = {'train': 0, 'val': 1, 'test': 2}
@@ -85,10 +86,10 @@ class Dataset_ETT_hour(Dataset):
         r_begin = s_end - self.label_len
         r_end = r_begin + self.label_len + self.pred_len
 
-        seq_x = self.data_x[s_begin:s_end]
-        seq_y = self.data_y[r_begin:r_end]
-        seq_x_mark = self.data_stamp[s_begin:s_end]
-        seq_y_mark = self.data_stamp[r_begin:r_end]
+        seq_x = self.data_x[s_begin:s_end:self.sample_rate]
+        seq_y = self.data_y[r_begin:r_end:self.sample_rate]
+        seq_x_mark = self.data_stamp[s_begin:s_end:self.sample_rate]
+        seq_y_mark = self.data_stamp[r_begin:r_end:self.sample_rate]
 
         return seq_x, seq_y, seq_x_mark, seq_y_mark
 
